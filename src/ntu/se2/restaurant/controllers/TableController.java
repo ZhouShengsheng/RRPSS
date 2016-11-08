@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -47,28 +46,6 @@ public class TableController {
 		}
 		return instance;
 	}
-	
-//	public static void main(String[] args) throws IOException {
-//		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.TABLE_PATH, false)));
-//		out.println("tableNo, size, status");
-//		int size=2;
-//		for(int i=0;i<30;i++){
-//			Table table = new Table();
-//			table.setTableNo(i+1);
-//			table.setStatus("vacated");
-//			table.setSize(size);
-//			if(i>9 && i<=19)
-//				size=4;
-//			if(i>19 &&i<=24)
-//				size=8;
-//			if(i>24 && i<=29)
-//				size=10;
-//			
-//			out.println(table.getTableNo()+","+table.getSize()+","+table.getStatus());
-//		}
-//		out.close();
-//		ScannerUtil.close();
-//	}
 	
 	/**
 	 * Load data from file.

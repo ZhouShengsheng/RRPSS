@@ -13,5 +13,5 @@ public final class DataFilePath {
 	public static final String TABLE_PATH = DATA_DIR + "table.txt";
 	public static final String ORDER_PATH = DATA_DIR + "order.txt";
 	public static final String STAFF_PATH = DATA_DIR + "staff.txt";
-	
+
 }

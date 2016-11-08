@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -249,23 +247,5 @@ public class ReservationController {
 			System.out.println("Reservation removed.");
 		}
 	}
-//
-//	private static boolean createreservation() throws ParseException, IOException
-//	{
-//		Scanner sc = new Scanner(System.in);
-//		r = new Reservation();
-//		System.out.println("Please enter the date:");
-//		r.setDate(sc.next());
-//		System.out.println("Please enter the start time:");
-//		r.setStart(sc.next());
-//		System.out.println("Please enter your name:");
-//		r.setName(sc.next());
-//		System.out.println("Please enter your Contact No.:");
-//		r.setContact(sc.next());
-//		System.out.println("Please enter the number of people:");
-//		r.setPeople(sc.next());
-//		sc.close();
-//		return (r.canReserve());
-//	}
 
 }
