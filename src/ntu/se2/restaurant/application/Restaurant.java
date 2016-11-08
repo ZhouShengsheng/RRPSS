@@ -116,24 +116,10 @@ public class Restaurant
 	                	 oc.viewOrder();
                          break;
 	                 }
-	                 case 3:int tableNo2;
-	                        boolean result2 = false;
-	                        System.out.println("Enter the table number:");
-	                        tableNo2 = sc.nextInt();
-	                        for(ReservationEntity r:seatMan.Occupied)
-	                        {
-	               	           if(Integer.parseInt(r.getTableNo())==tableNo2)
-	               	           {
-	               		        r.tables[tableNo2].order.removeOrder();
-	               		        result2 = true;
-	               		        break;
-	               	           }
-	                        }
-	                	     if(result2)
-		                        System.out.println("Successfully Deleted!");
-	                         else 
-	        	                System.out.println("Process Failed!");
-	                         break;
+	                 case 3: {
+	                	 oc.removeItemAtOrder();
+	                	 break;
+	                 }
 	                 case 4: int tableNo3;
 	                         System.out.println("Enter the table number:");
 	                         tableNo3 = sc.nextInt();

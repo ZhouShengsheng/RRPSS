@@ -14,6 +14,7 @@ import ntu.se2.restaurant.controllers.ItemController;
 import ntu.se2.restaurant.controllers.Menu;
 import ntu.se2.restaurant.utils.DateUtil;
 import ntu.se2.restaurant.utils.ScannerUtil;
+
 public class Order
 {
 	Menu m;
@@ -22,6 +23,8 @@ public class Order
 	private String id;
 	private Date date;
 	private Table table;
+	private Staff staff;
+	private String status;
 	private double bill = 0;		// bill before tax
 	private double totalBill = 0;	// bill after tax
 	
@@ -93,7 +96,24 @@ public class Order
 	public void setTotalBill(double totalBill) {
 		this.totalBill = totalBill;
 	}
+	
+	public Staff getStaff() {
+		return staff;
+	}
 
+	public void setStaff(Staff staff) {
+		this.staff = staff;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	// TODO: To be removed.
 	public void takeOrder()
 	{
 		m = new Menu();
@@ -128,22 +148,24 @@ public class Order
 		}while(choice==1 || choice==2);	
 	}
 	
-	public void takeOrder(Promo p)
-	{
-		pList.add(p);
-	}
-	
-	public void viewOrder()
-	{
-		for (int i = 0; i < itemList.size(); i++) {
-			Item item = itemList.get(i);
-			 System.out.println("Item: "+ item.getName()+" $"+item.getPrice());	 
-		}
-		for (int i = 0; i < pList.size(); i++) {
-			Promo prm = pList.get(i);
-			System.out.println("Promotion: "+ prm.getName()+" $"+prm.getPrice());
-		}
-	}
+	// TODO: To be removed.
+//	public void takeOrder(Promo p)
+//	{
+//		pList.add(p);
+//	}
+//	
+	// TODO: To be removed.
+//	public void viewOrder()
+//	{
+//		for (int i = 0; i < itemList.size(); i++) {
+//			Item item = itemList.get(i);
+//			 System.out.println("Item: "+ item.getName()+" $"+item.getPrice());	 
+//		}
+//		for (int i = 0; i < pList.size(); i++) {
+//			Promo prm = pList.get(i);
+//			System.out.println("Promotion: "+ prm.getName()+" $"+prm.getPrice());
+//		}
+//	}
 	
 	public double calcBill()
 	{
@@ -161,6 +183,7 @@ public class Order
 		return bill;
 	}
 	
+	// TODO: To be removed.
 	public void removeOrder()
 	{
 		Scanner sc = ScannerUtil.scanner;

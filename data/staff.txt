@@ -1,0 +1,6 @@
+staffID,name,gender,jobtitle
+1,liuz,female,waitress
+2,zhih,male,waiter
+3,dar,female,chef
+4,binu,female,waitress
+5,Abhi,male,waiter

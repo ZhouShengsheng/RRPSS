@@ -1,10 +1,10 @@
 itemID, name, type, desc, price, discounted price
-1,2,vacated
+1,2,occupied
 2,2,occupied
 3,2,vacated
 4,2,vacated
 5,2,vacated
-6,2,occupied
+6,2,vacated
 7,2,vacated
 8,2,vacated
 9,2,vacated

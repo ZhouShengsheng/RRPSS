@@ -32,19 +32,19 @@ public class OrderController {
 	// Fields.
 	private ArrayList<Order> orderList;
 	private Scanner sc = ScannerUtil.scanner;
-	private Availability seatMan;
 	private Scanner scanner;
 	private TableController tableController;
 	private PromotionController promotionController;
 	private ItemController itemController;
+	private StaffController staffController;
 	
 	private OrderController() {
 		orderList = new ArrayList<Order>();
-		seatMan = new Availability();
 		scanner = ScannerUtil.scanner;
 		tableController = TableController.sharedInstance();
 		promotionController = PromotionController.sharedInstance();
 		itemController = ItemController.sharedInstance();
+		staffController = StaffController.sharedInstance();
 		loadData();
 	}
 	
@@ -83,8 +83,11 @@ public class OrderController {
 					order.setDate(new Date());
 				}
 				int tableNo = Integer.parseInt(current[2]);
-				order.setTable(TableController.sharedInstance().getTableByNumber(tableNo));
-				for(int i=3;i<current.length;i++)
+				order.setTable(tableController.getTableByNumber(tableNo));
+				String staffId = current[3];
+				order.setStaff(staffController.getStaffById(staffId));
+				order.setStatus(current[4]);
+				for(int i=5;i<current.length;i++)
 				{
 					String id = current[i];
 					if (id.startsWith("P")) {
@@ -120,10 +123,11 @@ public class OrderController {
 	private boolean saveData() {
 		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.ORDER_PATH, false)))) 
 		{
-			out.print("orderId, date, tableNo, item1, item2, item3....");
+			out.print("orderId, date, tableNo, staffId, status, item1, item2, item3....");
 			for (int i = 0; i < orderList.size(); i++) {
 				Order order = orderList.get(i);
-				out.print("\n"+order.getId()+","+DateUtil.getDateTime(order.getDate())+","+order.getTable().getTableNo());
+				out.print("\n"+order.getId()+","+DateUtil.getDateTime(order.getDate())+","+order.getTable().getTableNo() +
+						","+order.getStaff().getStaffID()+","+order.getStatus());
 				ArrayList<Item> itemList = order.getItemList();
 				ArrayList<Promo> pList = order.getpList();
 				for(int j=0; j<itemList.size(); j++)
@@ -159,21 +163,49 @@ public class OrderController {
 	}
 	
 	/**
+	 * Print given order.
+	 * 
+	 * @param order
+	 */
+	public void printOrder(Order order) {
+		if (order != null) {
+			System.out.println("   ID: " + order.getId());
+			System.out.println(" Date: " + DateUtil.getDateTime(order.getDate()));
+			System.out.println("Table: " + order.getTable().getTableNo());
+			System.out.println("Staff: " + order.getStaff().getStaffID() + " " + order.getStaff().getName());
+			System.out.println("Status: " + order.getStatus());
+			
+			ArrayList<Item> itemList = order.getItemList();
+			int size = itemList.size();
+			if (size > 0) {
+				System.out.println("Items:");
+			}
+			for(int i = 0; i < size; i++) {
+				Item item = itemList.get(i);
+				System.out.println(String.format("\t%10s%20s", item.getItemID(), item.getName()));
+			}
+			
+			ArrayList<Promo> pList = order.getpList();
+			size = pList.size();
+			if (size > 0) {
+				System.out.println("Promotions:");
+			}
+			for(int i = 0; i < size; i++) {
+				Promo promo = pList.get(i);
+				System.out.println(String.format("\t%10s%20s", promo.getPromoID(), promo.getName()));
+			}
+		}
+	}
+	
+	/**
 	 * Create or add item to order.
 	 * 
 	 */
 	public void createOrAddItemToOrder() {
-		boolean result = false;
+		boolean isNewOrder = false;
 		String orderId;
 		System.out.println("Enter order id:");
 		orderId = sc.nextLine();
-
-		// System.out.println("seatMan.Occupied.size(): " +
-		// seatMan.Occupied.size());
-		// for (int i = 0; i < seatMan.Occupied.size(); i++) {
-		// ReservationEntity r = seatMan.Occupied.get(i);
-		// System.out.println("name: " + r.getName());
-		// }
 
 		Order order = getOrderById(orderId);
 		int tableNo;
@@ -188,11 +220,14 @@ public class OrderController {
 			Table table = tableController.getTableByNumber(tableNo);
 			table.setStatus("occupied");
 			order.setTable(table);
+			order.setStaff(staffController.getCurrentStaff());
+			order.setStatus("not_paid");
+			isNewOrder = true;
 		}
 
 		// Take order.
-		ArrayList<Item> itemList = new ArrayList<Item>();
-		ArrayList<Promo> pList = new ArrayList<Promo>();
+		ArrayList<Item> itemList = order.getItemList();
+		ArrayList<Promo> pList = order.getpList();
 		int choice;
 		promotionController.printPromotionList();
 		itemController.printItemList();
@@ -221,7 +256,9 @@ public class OrderController {
 		
 		order.setItemList(itemList);
 		order.setpList(pList);
-		orderList.add(order);
+		if (isNewOrder) {
+			orderList.add(order);
+		}
 
 		if (saveData()) {
 			tableController.saveData();
@@ -246,31 +283,62 @@ public class OrderController {
 //		}
         
         Order order = getOrderById(orderId);
-        if (order != null) {
-			System.out.println("   ID: " + order.getId());
-			System.out.println(" Date: " + DateUtil.getDateTime(order.getDate()));
-			System.out.println("Table: " + order.getTable().getTableNo());
-			
-			ArrayList<Item> itemList = order.getItemList();
-			int size = itemList.size();
-			if (size > 0) {
-				System.out.println("Items:");
-			}
-			for(int i = 0; i < size; i++) {
-				Item item = itemList.get(i);
-				System.out.println(String.format("\t%10s%20s", item.getItemID(), item.getName()));
-			}
-			
-			ArrayList<Promo> pList = order.getpList();
-			size = pList.size();
-			if (size > 0) {
-				System.out.println("Promotions:");
-			}
-			for(int i = 0; i < size; i++) {
-				Promo promo = pList.get(i);
-				System.out.println(String.format("\t%10s%20s", promo.getPromoID(), promo.getName()));
-			}
+        printOrder(order);
+	}
+	
+	public void removeItemAtOrder() {
+		String orderId;
+		System.out.println("Enter the order ID:");
+		orderId = sc.nextLine();
+		
+		Order order = getOrderById(orderId);
+		if (order == null) {
+			System.out.println("Order not found.");
+			return ;
 		}
+		
+		printOrder(order);
+		
+		ArrayList<Item> itemList = order.getItemList();
+		ArrayList<Promo> pList = order.getpList();
+		
+		int choice;
+		
+		do {
+			System.out.println("1. Remove an item or promotion");
+			System.out.println("2. Exit");
+			choice = sc.nextInt();
+			sc.skip(System.lineSeparator());
+			
+			if(choice==1)
+			{
+				System.out.print("Enter the ID:");
+				String id = sc.nextLine();
+				if (id.startsWith("P")) {
+					for(int i = 0; i < pList.size(); i++) {
+						Promo promo = pList.get(i);
+						if (promo.getPromoID().equals(id)) {
+							pList.remove(i);
+							break;
+						}
+					}
+				} else {
+					for(int i = 0; i < itemList.size(); i++) {
+						Item item = itemList.get(i);
+						if (item.getItemID().equals(id)) {
+							itemList.remove(i);
+							break;
+						}
+					}
+				}
+			}
+		} while (choice == 1);
+		
+		 if(saveData()) {
+			 System.out.println("Successfully Deleted!");
+		 } else {
+			 System.out.println("Process Failed!");
+		 }
 	}
 	
 //	public void takeOrder(Promo p)
