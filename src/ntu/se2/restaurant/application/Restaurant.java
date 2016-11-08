@@ -64,8 +64,7 @@ public class Restaurant
 			                break;
 			        case 2: ic.updateItem();
 			                break;
-			        case 3: sysm = new SystemManagement();
-	                        sysm.deleteItem(sc);
+			        case 3: ic.deleteItem();
 	                        break;
 			        case 4: break;
 			        }

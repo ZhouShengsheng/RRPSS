@@ -245,6 +245,7 @@ public class ItemController {
 		Item item = getItemById(itemID);
 		itemList.remove(item);
 		System.out.println("itemList size: "+ itemList.size());
+		
 		saveData();
 	}
 }

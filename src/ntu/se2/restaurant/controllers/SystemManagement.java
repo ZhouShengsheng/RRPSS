@@ -32,6 +32,7 @@ public class SystemManagement
 		
 	}
 	
+	// TODO: To be removed.
 	public void getItems()throws IOException // reading from the file and updating it into the array list
 	{
 		try{
@@ -50,6 +51,8 @@ public class SystemManagement
 			err1.printStackTrace();
 		}
 	}
+	
+	// TODO: To be removed.
 	public void getPromotion()throws IOException
 	{
 		try
@@ -86,6 +89,7 @@ public class SystemManagement
 		}
    }
 	
+	// TODO: To be removed.
 	public Item getItem(String obj_ID)
 	{
 		Item obj = null;
