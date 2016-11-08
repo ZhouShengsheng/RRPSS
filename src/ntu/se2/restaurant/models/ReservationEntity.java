@@ -177,10 +177,6 @@ public ReservationEntity(String date, String startTime,String People,String name
     				this.setStart(DATE_FORMAT.getTime(r.getStart()));
     				this.setEnd();
     				break;
-    				
-    				
-    				
-    				
     			}
     		}
     	}

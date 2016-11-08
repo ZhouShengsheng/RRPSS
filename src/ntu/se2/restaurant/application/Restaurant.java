@@ -4,6 +4,7 @@ package ntu.se2.restaurant.application;
 import java.util.*;
 
 import ntu.se2.restaurant.controllers.ItemController;
+import ntu.se2.restaurant.controllers.OrderController;
 import ntu.se2.restaurant.controllers.SystemManagement;
 import ntu.se2.restaurant.models.ReservationEntity;
 import ntu.se2.restaurant.models.Staff;
@@ -106,45 +107,19 @@ public class Restaurant
 	                System.out.println("3.Remove an item from an Order");
 	                System.out.println("4.Print Order Invoice");
 	                System.out.println("5.Back to Main Menu");
+	                OrderController oc = OrderController.sharedInstance();
 	                int subChoice = sc.nextInt();
 			        sc.skip("\n");
 			        switch(subChoice)
 	                {
-	                  case 1: boolean result = false;
-	                         int tableNo;
-	                          System.out.println("Enter a table number:");
-	                          tableNo = sc.nextInt();
-	                          
-	                          for(ReservationEntity r:seatMan.Occupied)
-	                          {
-	                        	  if(Integer.parseInt(r.getTableNo())==tableNo)
-	                        	  {
-	                        		  r.tables[tableNo].order.takeOrder();
-	                        		  result = true;
-	                        		  break;
-	                        	  }
-	                          }
-	                          if(result)
-		                        System.out.println("Successfully Added!");
-	                          else 
-	        	                System.out.println("Process Failed!");
-	                          break;
-	                 case 2: int tableNo1;
-	                         boolean result1 = false;
-	                         System.out.println("Enter the table number:");
-	                         tableNo1 = sc.nextInt();
-	                         for(ReservationEntity r:seatMan.Occupied)
-	                         {
-	                       	  if(Integer.parseInt(r.getTableNo())==tableNo1)
-	                       	  {
-	                       		  r.tables[tableNo1].order.viewOrder();
-	                       		  result1 = true;
-	                       		  break;
-	                       	  }
-	                         }
-	                         if(!result1)
-	 	                        System.out.println("No order placed!");
-	                         break;
+	                  case 1: {
+	                	  oc.createOrAddItem();
+	                	  break;
+	                  }
+	                 case 2: {
+	                	 oc.viewOrder();
+                         break;
+	                 }
 	                 case 3:int tableNo2;
 	                        boolean result2 = false;
 	                        System.out.println("Enter the table number:");

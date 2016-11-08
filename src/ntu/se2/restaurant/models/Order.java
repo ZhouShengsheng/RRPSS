@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import ntu.se2.restaurant.controllers.ItemController;
 import ntu.se2.restaurant.controllers.Menu;
 import ntu.se2.restaurant.utils.DateFormat;
+import ntu.se2.restaurant.utils.ScannerUtil;
 public class Order
 {
 	Menu m;
@@ -19,8 +21,6 @@ public class Order
 	private ArrayList<Promo> pList = new ArrayList<Promo>();
 	private double bill = 0;
 	private double totalBill = 0;
-	
-	Scanner sc;
 	
 	public Order()
 	{
@@ -32,7 +32,7 @@ public class Order
 		m = new Menu();
 		int choice;
 		m.printMenu();
-		sc = new Scanner(System.in);
+		Scanner sc = ScannerUtil.scanner;
 		do
 		{
 			System.out.println("-----Take Order-----");
@@ -41,12 +41,15 @@ public class Order
 			System.out.println("3.Exit ");
 			System.out.println("Enter your choice: ");
 	        choice = sc.nextInt();
+	        sc.skip("\n");
 			if(choice ==1)
 				m.printMenu();
 			else if(choice ==2)
 			{
-				System.out.println("Enter item code to select item: ");
-				Object object = m.selectItem(sc.next());
+				System.out.println("Enter item id to select item: ");
+				String itemId = sc.nextLine();
+				ItemController ic = ItemController.sharedInstance();
+				Object object = ic.getItemById(itemId);
 				if(object!=null)
 				{
 					if(object instanceof Item)
@@ -93,7 +96,7 @@ public class Order
 	
 	public void removeOrder()
 	{
-		sc = new Scanner(System.in);
+		Scanner sc = ScannerUtil.scanner;
 		String input;
 		int choice;
 		System.out.println("1. Remove an item");
@@ -122,7 +125,6 @@ public class Order
 			}
 			
 		}
-		sc.close();
 	}
 	
 	public void printInvoice(Staff staff, ReservationEntity r) throws ParseException
