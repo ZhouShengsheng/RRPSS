@@ -35,7 +35,7 @@ public class SystemManagement
 	public void getItems()throws IOException // reading from the file and updating it into the array list
 	{
 		try{
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("item.txt")));
+			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/item.txt")));
 			sc.nextLine();
 			while(sc.hasNext())
 			{
@@ -54,7 +54,7 @@ public class SystemManagement
 	{
 		try
 		{
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("promotion.txt")));
+			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/promotion.txt")));
 			sc.nextLine();
 			while(sc.hasNext())
 			{
@@ -129,7 +129,7 @@ public class SystemManagement
 	    if(!exist)
 	    {
 	   
-	    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("item.txt",true))))
+	    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data/item.txt",true))))
 	    	{
 	    		out.println(itm.getItemID()+","+itm.getType()+","+itm.getName()+","+itm.getPrice()+","+itm.getDescription()+","+itm.getDiscountedPrice());	    				
 	            result = true;    	
@@ -226,7 +226,7 @@ public class SystemManagement
 	{	
 		try 
 		{
-			String path = "item.txt";
+			String path = "data/item.txt";
 			// Use relative path for Unix systems
 			File f = new File(path);
 
@@ -310,7 +310,7 @@ public class SystemManagement
 	
 	private boolean saveAllPromos()
 	{
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("promotion.txt", false)))) 
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data/promotion.txt", false)))) 
 		{
 			out.print("promoID, promoName, item1, item2, item3, item4....");
 			for (int i = 0; i < pList.size(); i++) {
@@ -460,7 +460,7 @@ public class SystemManagement
 	{
 		try{
 			double total = 0;
-			FileReader     frStream = new FileReader("order.txt");
+			FileReader     frStream = new FileReader("data/order.txt");
 			BufferedReader brStream = new BufferedReader(frStream);
 			String inputLine ;
 			ArrayList<String> history = new ArrayList<String>();
@@ -525,7 +525,7 @@ public class SystemManagement
 	
 	public ArrayList<Staff> getStaffID(Scanner sc) throws FileNotFoundException,IOException{
 		ArrayList<Staff> staffIDList = new ArrayList<Staff>();
-		String path = "C:" + File.separator + "Restaurant" + File.separator + "staff.txt";
+		String path = "data/staff.txt";
 		// Use relative path for Unix systems
 		File f = new File(path);
 

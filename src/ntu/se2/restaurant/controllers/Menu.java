@@ -45,7 +45,7 @@ public class Menu
 	public void getItems()throws IOException // reading from the file and updating it into the array list
 	{
 		try{
-			String path = "C:" + File.separator + "Restaurant" + File.separator + "item.txt";
+			String path = "data/item.txt";
 			// Use relative path for Unix systems
 			File f = new File(path);
 
@@ -72,7 +72,7 @@ public class Menu
 	{
 		try
 		{
-			String path = "C:" + File.separator + "Restaurant" + File.separator + "promotion.txt";
+			String path = "data/promotion.txt";
 			// Use relative path for Unix systems
 			File f = new File(path);
 

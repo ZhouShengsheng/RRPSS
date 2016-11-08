@@ -230,4 +230,21 @@ public class ItemController {
 		
 		saveData();
 	}
+	
+	/**
+	 * Delete item.
+	 * 
+	 */
+	public void deleteItem() {
+		printItemList();
+		String itemID;
+		System.out.print("Please enter itemID of item to be deleted: ");
+		itemID = sc.nextLine();
+		System.out.println("itemList size: "+ itemList.size());
+		System.out.println("itemID: "+ itemID);
+		Item item = getItemById(itemID);
+		itemList.remove(item);
+		System.out.println("itemList size: "+ itemList.size());
+		saveData();
+	}
 }

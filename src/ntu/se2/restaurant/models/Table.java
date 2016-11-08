@@ -153,7 +153,7 @@ public class Table {
 	  
 		reserveList=new ArrayList<ReservationEntity>();
 		try{
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
+			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/reservation.txt")));
 			
 			while(sc.hasNext()){
 				String temp[]=sc.next().split(",");
