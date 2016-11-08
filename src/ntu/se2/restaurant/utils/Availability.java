@@ -11,25 +11,20 @@ import ntu.se2.restaurant.models.Table;
 
 public class Availability 
 {
-	Table table[];
 	ReservationEntity reservation=new ReservationEntity();
 	public ArrayList<ReservationEntity> Occupied=new ArrayList<ReservationEntity>();
 	private static final DateFormat DATE_FORMAT=new DateFormat();
 	public Availability(){
 		
 	}
-	public Table[] getTable(){
-		return table;
-	}
-	public void setTable(Table[] table){
-		this.table=table;
-	}
+
 	public ArrayList<ReservationEntity> getOccupied(){
 		return Occupied;
 	}
 	public void setOccupied(ArrayList<ReservationEntity> Occupied){
 		this.Occupied=Occupied;
 	}
+	
 	public void getOccupiedtable() throws ParseException,IOException{
 		reservation=new ReservationEntity();
 		Occupied=reservation.getCurrentReservation();
@@ -53,17 +48,18 @@ public class Availability
 		}
 		
 	}
-    public boolean releaseTable(String tableNo){
-    	boolean unassignsuccessfully=false;
-    	for(int i=0;i<30;i++){
-    		if(table[i].getTableNo()==Integer.parseInt(tableNo)){
-    			if(table[i].getisOccupied()==1){
-    				table[i].setOccupied(0);
-    				unassignsuccessfully=true;
-    			}
-    		}
-    	}
-    	return unassignsuccessfully;
-    }
+	
+//    public boolean releaseTable(String tableNo){
+//    	boolean unassignsuccessfully=false;
+//    	for(int i=0;i<30;i++){
+//    		if(table[i].getTableNo()==Integer.parseInt(tableNo)){
+//    			if(table[i].getisOccupied()==1){
+//    				table[i].setOccupied(0);
+//    				unassignsuccessfully=true;
+//    			}
+//    		}
+//    	}
+//    	return unassignsuccessfully;
+//    }
 
 }

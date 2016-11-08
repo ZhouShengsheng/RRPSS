@@ -21,12 +21,16 @@ import ntu.se2.restaurant.utils.DateFormat;
 public class Table {
 	public int size, tableNo;
 	public int isoccupied;
+	
 	private ArrayList<ReservationEntity> reserveList;
+	
 	public Order order = new Order();
+	
 	DateFormat DATE_FORMAT = new DateFormat();
 	SimpleDateFormat FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	
 	public Table() {}
+	
 	public Table(int size, int tableNo, int isoccupied) {
 		this.size = size;
 		this.tableNo = tableNo;
@@ -45,10 +49,11 @@ public class Table {
 	public int getisOccupied() { return isoccupied; }
 	public void setOccupied(int occupied) { this.isoccupied = occupied; }
 	
+	// Load reservation data.
 	public ArrayList<ReservationEntity> getReservationAll() throws ParseException{
 		try{
 			reserveList=new ArrayList<ReservationEntity>();
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
+			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/reservation.txt")));
 			sc.nextLine();
 			
 			while(sc.hasNext()){
@@ -72,6 +77,8 @@ public class Table {
 	        }
 	        return reserveList;
      }
+	
+	// Remove a reservation.
   public void reservationRemove() throws ParseException{
 	  int index;
 	  Scanner sc=new Scanner(System.in);
@@ -119,6 +126,8 @@ public class Table {
 	  }while(index!=0);
 	  
   }
+  
+  
   public ArrayList<ReservationEntity> getReservationThisDay(String Date) throws ParseException{
 	  
 	 reserveList=new ArrayList<ReservationEntity>();
@@ -149,6 +158,8 @@ public class Table {
 	        return reserveList;
 	        
    }
+  
+  
   public ArrayList<ReservationEntity> getReservationCurrent() throws ParseException{
 	  
 		reserveList=new ArrayList<ReservationEntity>();
@@ -169,8 +180,8 @@ public class Table {
 					r.setPeople(temp[3]);
 					r.setStart(temp[4]);
 					r.setTableNo(temp[5]);
-				isoccupied = Integer.parseInt(temp[6]);
-				reserveList.add(r);
+					isoccupied = Integer.parseInt(temp[6]);
+					reserveList.add(r);
 				}
 			}
 			sc.close();
@@ -235,6 +246,7 @@ public class Table {
 	   return reservesucceessfully;
 	   
    }
+   
    public ReservationEntity Reserveandallocate(String date,Date Start,String People,String tableNum) throws ParseException, IOException{//For today the reservation made before will be conducted so need change occupied to 1
 	    Scanner sc=new Scanner(System.in);
 	    reserveList=new ArrayList<ReservationEntity>();
@@ -298,7 +310,8 @@ public class Table {
 	    		return null;
 	    	
 	    
-	    		}	  
+   }
+   
    public void removeReservationOnPayment(int tableNum) throws ParseException{
 		//tableNum, occupied bit=1
 		//writing to file
