@@ -5,6 +5,7 @@ import java.util.*;
 
 import ntu.se2.restaurant.controllers.ItemController;
 import ntu.se2.restaurant.controllers.SystemManagement;
+import ntu.se2.restaurant.controllers.PromotionController;
 import ntu.se2.restaurant.models.ReservationEntity;
 import ntu.se2.restaurant.models.Staff;
 import ntu.se2.restaurant.utils.Availability;
@@ -64,8 +65,7 @@ public class Restaurant
 			                break;
 			        case 2: ic.updateItem();
 			                break;
-			        case 3: sysm = new SystemManagement();
-	                        sysm.deleteItem(sc);
+			        case 3: ic.deleteItem();
 	                        break;
 			        case 4: break;
 			        }
@@ -77,26 +77,21 @@ public class Restaurant
 	                System.out.println("2.Update an existing promotion");
 	                System.out.println("3.Remove an existing promotion");
 	                System.out.println("4.Back to Main Menu");
+	                PromotionController pc = PromotionController.sharedInstance();
 	                int subChoice = sc.nextInt();
 			        sc.skip("\n");
 			        switch(subChoice)
 	                {
-	                 case 1:sysm = new SystemManagement();
-	                	    if(sysm.createPromo(sc))
-	        	                System.out.println("Successfully Added!");
-	                         else 
-	                	        System.out.println("Process Failed!");
-	                         break;
-	                 case 2:sysm = new SystemManagement(); 
-	                	    sysm.updatePromo(sc);
-	        	            break;
-	                 case 3:sysm = new SystemManagement();  
-	                	    if(sysm.deletePromo())
-	        	               System.out.println("Successfully Deleted!");
-	                        else 
-	                	       System.out.println("Process Failed!");
-	                         break;
-	                 case 4: break;
+	                  case 1: if(pc.createPromo())
+	        	                 System.out.println("Successfully Added!");
+	                          else 
+	                	         System.out.println("Process Failed!");
+	                          break;
+	                case 2: pc.updatePromo();
+	                        break;
+	                case 3: pc.deletePromo();
+                            break;
+	                case 4: break;
 	                }
 	                break;
 				}
