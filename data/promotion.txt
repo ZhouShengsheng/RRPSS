@@ -1,0 +1,5 @@
+promoID, promoName, item1, item2, item3, item4....
+P1,Whooping Meal,15.0,1,3,5
+P2,Awesome Combo,12.0,2,4,6
+P3,some meal,13.0,1,2,3
+P4,Test,5.0,1,2
