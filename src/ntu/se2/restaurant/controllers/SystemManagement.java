@@ -99,165 +99,8 @@ public class SystemManagement
 		return obj;
 	}
 	
-	// TODO: To be removed.
-	public boolean createItem(Scanner sc)
-	{
-		boolean result = false;
-		char check;
-		itm = new Item();
-		System.out.println("Please enter the name of the item:");
-	    itm.setName(sc.next());
-	    itemID++;
-		do{
-			System.out.println("Please enter the type of item:");
-			System.out.println("a. Appetisers");
-			System.out.println("m. Main course");
-			System.out.println("d. Desserts");
-			System.out.println("b. Beverages");
-			check = sc.next().charAt(0);
-		  }while(check!='a'&&check!='m'&&check!='d'&&check!='b');
-		itm.setType(check);
-		System.out.println("Please enter price of item");
-		itm.setPrice(sc.next());
-		System.out.println("Please enter description of the item");
-		itm.setDescription(sc.next());
-		System.out.println("Please enter the discounted price of the item");
-		itm.setDiscountedPrice(sc.next());
-		itm.setItemID(Integer.toString(itemID));
-	    for(Item i:itemList)
-	    {
-	    	if(i.getName().equals(itm.getName()))
-	    		exist = true;
-	    }
-	    
-	    if(!exist)
-	    {
-	   
-	    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data/item.txt",true))))
-	    	{
-	    		out.println(itm.getItemID()+","+itm.getType()+","+itm.getName()+","+itm.getPrice()+","+itm.getDescription()+","+itm.getDiscountedPrice());	    				
-	            result = true;    	
-	    	}
-	    	catch(IOException ex)
-	    	{
-	    		ex.printStackTrace();
-	    	}
-	    }
-		return result;
-	}
 	
-	// TODO: To be removed.
-	public void updateItem(Scanner sc)
-	{
-		int choice;
-		String itemID;
-		System.out.print("ItemID"+ "       " + "Item Name" + "       " + "Item Price" + "       " + "Item Description" + "                  " + "Item Type" + "       " + "Discounted Price");
-		for (int i = 0; i < itemList.size(); i++) {
-
-			Item itm=itemList.get(i);
-        	System.out.print("\n"+itm.getItemID() + "            "+ itm.getName() + "            "+ itm.getPrice() + "            "+ itm.getDescription()+ "            "+ itm.getType() + "            "+ itm.getDiscountedPrice());
-
-		}
-		System.out.println();
-		System.out.println("Please enter itemID of item to be updated");
-		itemID = sc.next();
-		itm = getItem(itemID);
-		System.out.println("1. Change Name");
-		System.out.println("2. Change Price");
-		System.out.println("3. Change Description");
-		System.out.println("4. Change Type");
-		System.out.println("5. Change Discounted Price");
-		choice = sc.nextInt();
-		switch(choice){
-			case 1: System.out.print("Enter new name of item:");
-				    itm.setName(sc.nextLine());
-				    writeArrayToItemFile();
-				    break;
-			case 2: System.out.print("Enter new price of item:");
-				    itm.setPrice(sc.nextLine());
-				    writeArrayToItemFile();
-				    break;
-			case 3: System.out.print("Enter new description of item:");
-				    itm.setDescription(sc.nextLine());
-				    writeArrayToItemFile();
-				    break;
-			case 4: char check;
-				    do
-				    {
-				      System.out.println("Enter new type of item");
-					  System.out.println("Please enter the type of item:");
-				      System.out.println("a. Appetisers");
-					  System.out.println("m. Main course");
-					  System.out.println("d. Desserts");
-					  System.out.println("b. Beverages");
-				      check = sc.next().charAt(0);
-					}while(check!='a'&&check!='m'&&check!='d'&&check!='b');
-				    itm.setType(check);
-				    writeArrayToItemFile();
-				    break;
-			case 5: System.out.println("Enter new discounted price of item");
-				    itm.setDiscountedPrice(sc.nextLine());
-				    writeArrayToItemFile();
-				    break;
-			}
-		}
-	
-	// TODO: To be removed.
-	public void deleteItem(Scanner sc) {
-		String itemID;
-		itm = new Item();
-		System.out.print("ItemID"+ "       " + "Item Name" + "       " + "Item Price" + "       " + "Item Description" + "                  " + 
-				"Item Type" + "       " + "Discounted Price");
-		
-		for (int i = 0; i < itemList.size(); i++) {
-
-			Item item=itemList.get(i);
-			System.out.print("\n"+item.getItemID() + "            "+ item.getName() + "            "+ item.getPrice() + "            "+ item.getDescription()
-					+ "            "+ item.getType() + "            "+ item.getDiscountedPrice());
-		}
-		System.out.println("Please enter itemID of item to be deleted");
-		itemID = sc.nextLine();
-		System.out.println("itemList size: "+ itemList.size());
-		System.out.println("itemID: "+ itemID);
-		itm = m.selectItem(itemID);
-		itemList.remove(itm);
-		System.out.println("itemList size: "+ itemList.size());
-		writeArrayToItemFile();
-	}
-	
-	// TODO: To be removed.
-	private void writeArrayToItemFile()
-	{	
-		try 
-		{
-			String path = "data/item.txt";
-			// Use relative path for Unix systems
-			File f = new File(path);
-
-			f.getParentFile().mkdirs(); 
-			if (!f.exists()) 
-				f.createNewFile();
-			Scanner sc = new Scanner(f);
-			sc.nextLine();
-			BufferedWriter out = new BufferedWriter(new FileWriter(f));
-			out.write("itemID, type, name, price, desc, discounted price");
-			out.newLine();
-			for (int i = 0; i < itemList.size(); i++) {
-
-				Item item=itemList.get(i);
-				out.write("\n"+item.getItemID()+","+item.getType()+","+item.getName()+","+item.getPrice()+","+item.getDescription()+","+item.getDiscountedPrice());
-			}
-			System.out.println("Update Successful!");
-			out.close();
-			sc.close();
-		}
-		catch (IOException ex) 
-		{
-			ex.printStackTrace();
-		}
-	 }
-	
-	public boolean createPromo(Scanner sc)
+	/*public boolean createPromo(Scanner sc)
 	{
 	    boolean result = false;
 	    
@@ -310,7 +153,7 @@ public class SystemManagement
 
 		//return savePromo(promoId, promoName, promoPrice, newItemList);
 		return saveAllPromos();
-	}
+	}*/
 	
 	private boolean saveAllPromos()
 	{
@@ -346,24 +189,7 @@ public class SystemManagement
 		return obj;
 	}
 	
-//	private boolean savePromo(String promoId, String promoName, Double promoPrice, ArrayList<Item> itemList)
-//	{
-//		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("promotion.txt", true)))) 
-//		{
-//            out.print("\n"+ "P"+ promoId+","+promoName+","+String.valueOf(promoPrice));
-//			for(int j=0; j<itemList.size(); j++)
-//			{
-//				Item item = itemList.get(j);
-//			    out.print(","+item.getItemID());
-//			}
-//			return true;
-//	    } 
-//		catch (IOException ex)
-//		{
-//			ex.printStackTrace();
-//		}
-//		return false;
-//	}
+
 	
 	/**
 	 * print all promos.
@@ -393,7 +219,7 @@ public class SystemManagement
 		System.out.println();
 	}
 	
-	public void updatePromo(Scanner sc)
+	/*public void updatePromo(Scanner sc)
 	{
 		printAllPromo();
 		
@@ -458,7 +284,7 @@ public class SystemManagement
 		boolean result = false;
 		
 		return result;
-	}
+	}*/
 	
 	public void printRevenue(int choice, Scanner sc)
 	{

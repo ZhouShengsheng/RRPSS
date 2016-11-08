@@ -33,6 +33,10 @@ public class ItemController {
 		loadData();
 	}
 	
+	public ArrayList<Item> getItemList() {
+		return itemList;
+	}
+	
 	/**
 	 * Get shared singleton instance.
 	 * 
