@@ -12,9 +12,11 @@ import ntu.se2.restaurant.models.Table;
 public class Availability 
 {
 	ReservationEntity reservation=new ReservationEntity();
-	public ArrayList<ReservationEntity> Occupied=new ArrayList<ReservationEntity>();
-	private static final DateFormat DATE_FORMAT=new DateFormat();
-	public Availability(){
+	// All reservations.
+	public ArrayList<ReservationEntity> reservationList = new ArrayList<ReservationEntity>();
+	public ArrayList<ReservationEntity> Occupied = new ArrayList<ReservationEntity>();
+	private static final DateUtil DATE_FORMAT=new DateUtil();
+	public Availability() {
 		
 	}
 

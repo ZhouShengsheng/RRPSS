@@ -15,22 +15,32 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import ntu.se2.restaurant.utils.DateFormat;
+import ntu.se2.restaurant.utils.DataFilePath;
+import ntu.se2.restaurant.utils.DateUtil;
 
 
 public class Table {
-	public int size, tableNo;
+	public int tableNo;
+	public int size;
+	private String status;
 	public int isoccupied;
 	
 	private ArrayList<ReservationEntity> reserveList;
 	
 	public Order order = new Order();
 	
-	DateFormat DATE_FORMAT = new DateFormat();
+	DateUtil DATE_FORMAT = new DateUtil();
 	SimpleDateFormat FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	
 	public Table() {}
 	
+	public Table(int tableNo, int size, String status) {
+		super();
+		this.tableNo = tableNo;
+		this.size = size;
+		this.status = status;
+	}
+
 	public Table(int size, int tableNo, int isoccupied) {
 		this.size = size;
 		this.tableNo = tableNo;
@@ -49,36 +59,61 @@ public class Table {
 	public int getisOccupied() { return isoccupied; }
 	public void setOccupied(int occupied) { this.isoccupied = occupied; }
 	
-	// Load reservation data.
-	public ArrayList<ReservationEntity> getReservationAll() throws ParseException{
-		try{
-			reserveList=new ArrayList<ReservationEntity>();
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/reservation.txt")));
-			sc.nextLine();
-			
-			while(sc.hasNext()){
-				String temp[]=sc.nextLine().split(",");
-				ReservationEntity r=new ReservationEntity();
-				r.setDate(temp[0]);
-				r.setName(temp[1]);
-				r.setContact(temp[2]);
-				r.setPeople(temp[3]);
-				r.setStart(temp[4]);
-				r.setTableNo(temp[5]);
-				isoccupied = Integer.parseInt(temp[6]);
-				reserveList.add(r);
-			}
-			sc.close();
-				
-				
-			}catch (FileNotFoundException err1) {
-		
-		          err1.printStackTrace();
-	        }
-	        return reserveList;
-     }
 	
-	// Remove a reservation.
+	// Load reservation data.
+//	public ArrayList<ReservationEntity> getReservationAll() throws ParseException{
+//		try{
+//			reserveList=new ArrayList<ReservationEntity>();
+//			Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.RESERVATION_PATH)));
+//			sc.nextLine();
+//			
+//			while(sc.hasNext()){
+//				String temp[]=sc.nextLine().split(",");
+//				ReservationEntity r=new ReservationEntity();
+//				r.setDate(temp[0]);
+//				r.setName(temp[1]);
+//				r.setContact(temp[2]);
+//				r.setPeople(temp[3]);
+//				r.setStart(temp[4]);
+//				r.setTableNo(temp[5]);
+//				isoccupied = Integer.parseInt(temp[6]);
+//				reserveList.add(r);
+//			}
+//			sc.close();
+//				
+//				
+//			}catch (FileNotFoundException err1) {
+//		
+//		          err1.printStackTrace();
+//	        }
+//	        return reserveList;
+//     }
+	
+	public int getIsoccupied() {
+		return isoccupied;
+	}
+
+	public void setIsoccupied(int isoccupied) {
+		this.isoccupied = isoccupied;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public ArrayList<ReservationEntity> getReserveList() {
+		return reserveList;
+	}
+
+	public void setReserveList(ArrayList<ReservationEntity> reserveList) {
+		this.reserveList = reserveList;
+	}
+
+// Remove a reservation.
   public void reservationRemove() throws ParseException{
 	  int index;
 	  Scanner sc=new Scanner(System.in);
@@ -88,7 +123,8 @@ public class Table {
 	  
 	  do{
 		  int i=1;
-		  reserveList=getReservationAll();
+		// TODO: delete.
+		  //reserveList=getReservationAll();
 		  for(Iterator<ReservationEntity> j=reserveList.iterator();j.hasNext();){
 			  ReservationEntity temp=j.next();
 			  temp.setEnd();
@@ -99,7 +135,7 @@ public class Table {
 		  index=sc.nextInt();
 		  if(index>0 && index<=reserveList.size()){
 			  reserveList.remove(index-1);
-			  try(PrintWriter updated = new PrintWriter(new BufferedWriter(new FileWriter("reservation.txt", false)))){
+			  try(PrintWriter updated = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.RESERVATION_PATH, false)))){
 			     updated.println("date,name,contact,people,starttime,tableNo,occcupied");
 					for(Iterator<ReservationEntity> j = reserveList.iterator(); j.hasNext();){
 						ReservationEntity temp = j.next();
@@ -133,7 +169,7 @@ public class Table {
 	 reserveList=new ArrayList<ReservationEntity>();
 	  try{		
 		  
-		    Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
+		    Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.RESERVATION_PATH)));
 			sc.nextLine();
 		    while(sc.hasNext()){
 				String temp[]=sc.next().split(",");
@@ -164,7 +200,7 @@ public class Table {
 	  
 		reserveList=new ArrayList<ReservationEntity>();
 		try{
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("data/reservation.txt")));
+			Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.RESERVATION_PATH)));
 			
 			while(sc.hasNext()){
 				String temp[]=sc.next().split(",");
@@ -213,7 +249,7 @@ public class Table {
 						  if(!(Start.getTime()<=(temp.getEnd().getTime()+4))){
 						   if((Start.getTime() - End.getTime())/(60 * 1000) % 60 <= 60*60*1000){
 							 try{  
-							   String fileName= "reservation.txt";
+							   String fileName= DataFilePath.RESERVATION_PATH;
 							   FileWriter filewriter = new FileWriter(fileName,true); //the true will append the new data
 							   filewriter.write("\n"+date + "," + name + "," + Contact +","+ People + "," +   sdf.format(Start) + ","+ tableNum +","+ "0");//appends the string to the file
 							   filewriter.close();
@@ -234,7 +270,7 @@ public class Table {
 	   }
 	   else{
 		  try{
-		   String fileName= "reservation.txt";
+		   String fileName= DataFilePath.RESERVATION_PATH;
 		   FileWriter filewriter = new FileWriter(fileName,true); //the true will append the new data
 		   filewriter.write("\n"+date + "," + name + "," + Contact +","+ People + "," +   sdf.format(Start) + ","+ tableNo +","+ "0");//appends the string to the file
 		   filewriter.close();
@@ -275,7 +311,7 @@ public class Table {
 	    		    					String name = sc.nextLine();
 	    		    					System.out.println("Enter Customer Contact");
 	    		    					String contact = sc.nextLine();
-	    								String filename= "reservation.txt";
+	    								String filename= DataFilePath.RESERVATION_PATH;
 	    								FileWriter filewriter = new FileWriter(filename,true); 
 	    								filewriter.write("\r"+date + "," + "," + name + "," + contact + "," + People + "," + tableNum+","+ DATE_FORMAT.getTime(Start)+","+ "1");
 	    								filewriter.close();
@@ -300,7 +336,7 @@ public class Table {
 	    			String name = sc.nextLine();
 	    			System.out.println("Enter Customer Contact");
 	    			String contact = sc.nextLine();
-	    			String filename= "reservation.txt";
+	    			String filename= DataFilePath.RESERVATION_PATH;
 	    			FileWriter filewriter = new FileWriter(filename,true); 
 	    			filewriter.write("\r"+date + "," + "," + name + "," + contact + "," + People + "," + tableNum+","+ DATE_FORMAT.getTime(Start)+","+ "1");
 					filewriter.close();
@@ -317,7 +353,8 @@ public class Table {
 		//writing to file
 		Calendar cal = Calendar.getInstance();
 		Date currentTime = cal.getTime();
-		reserveList = getReservationAll();
+		// TODO: delete.
+		//reserveList = getReservationAll();
 		for(Iterator <ReservationEntity> r = reserveList.iterator(); r.hasNext(); ){
 			ReservationEntity reservation = r.next(); 
 			if(Integer.parseInt(reservation.getTableNo())==tableNum){
@@ -325,7 +362,7 @@ public class Table {
 			}
 		}
 		//tableNum, occupied bit=1
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("reservation.txt", false)))) {
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.RESERVATION_PATH, false)))) {
 		out.println("date,name,contact,people,start,tableNo,occupied");
 		for(Iterator<ReservationEntity> r = reserveList.iterator(); r.hasNext();){
 			ReservationEntity reservation = r.next();

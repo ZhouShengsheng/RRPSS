@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import ntu.se2.restaurant.utils.DateFormat;
+import ntu.se2.restaurant.utils.DateUtil;
 
 public class ReservationEntity {
     //String RULE="HH:mm";
@@ -14,7 +14,7 @@ public class ReservationEntity {
 	private String name,people,contact,date,tableNo;
 	private Date start,end;
 	Calendar calendar = Calendar.getInstance();
-	private static final DateFormat DATE_FORMAT=new DateFormat();
+	private static final DateUtil DATE_FORMAT=new DateUtil();
 	public Table tables[]=new Table[30];
 	Table table;
 	// 1. Given time and no of people, find the table with suitable size and check if is available
@@ -147,10 +147,13 @@ public ReservationEntity(String date, String startTime,String People,String name
     	
     }
     public ArrayList<ReservationEntity> getAllReservation() throws ParseException,IOException{
-    	table=new Table();
-    	return table.getReservationAll();
+    	// TODO: return resvation list.
     	
-    	
+//    	table=new Table();
+//    	return table.getReservationAll();
+//    	
+//    	
+    	return null;
     }
     public ArrayList<ReservationEntity> getThisDayReservation(String date) throws ParseException,IOException{
     	table=new Table();

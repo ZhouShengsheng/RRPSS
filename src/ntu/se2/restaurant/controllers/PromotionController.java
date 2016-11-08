@@ -18,7 +18,6 @@ import ntu.se2.restaurant.controllers.ItemController;
 /**
  * Singleton class to control promotions.
  * 
- *
  */
 public class PromotionController{
 
@@ -45,41 +44,39 @@ public class PromotionController{
 			}
 			return instance;
 		}
-		private void loadData(){
-			
-				try
-				{
-					Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.PROMO_PATH)));
-					sc.nextLine();
-					while(sc.hasNext())
+		
+		private void loadData() {
+			try {
+				Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.PROMO_PATH)));
+				sc.nextLine();
+				while(sc.hasNext()) {
+					String current[] = sc.nextLine().split(",");
+					Promo p = new Promo();
+					ArrayList<Item> tempList = new ArrayList<Item>();
+					p.setPromoID(current[0]);
+					p.setName(current[1]);
+					p.setPrice(Double.parseDouble(current[2]));
+					ArrayList<Item> itemList= ItemController.sharedInstance().getItemList();
+					for(int i=3;i<current.length;i++)
 					{
-						String current[] = sc.nextLine().split(",");
-						Promo p = new Promo();
-						ArrayList<Item> tempList = new ArrayList<Item>();
-						p.setPromoID(current[0]);
-						p.setName(current[1]);
-						p.setPrice(Double.parseDouble(current[2]));
-						ArrayList<Item> itemList= ItemController.sharedInstance().getItemList();
-						for(int i=3;i<current.length;i++)
+						for (int j = 0; j <itemList.size(); j++)
 						{
-							for (int j = 0; j <itemList.size(); j++)
+							Item check = itemList.get(j);
+							if(current[i].equals(check.getItemID()))
 							{
-								Item check = itemList.get(j);
-								if(current[i].equals(check.getItemID()))
-								{
-									tempList.add(check);
-								}
+								tempList.add(check);
 							}
 						}
-						p.setItemList(tempList);
-						promoList.add(p);
 					}
-					sc.close();
-				    
-				} catch (FileNotFoundException ex1)
-				{
-					  ex1.printStackTrace();
+					p.setItemList(tempList);
+					promoList.add(p);
 				}
+				sc.close();
+			    
+			} catch (FileNotFoundException ex1)
+			{
+				  ex1.printStackTrace();
+			}
 		}
 		private boolean saveData(){
 			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.PROMO_PATH, false)))) 
@@ -96,6 +93,7 @@ public class PromotionController{
 					}
 				}
 	            
+				out.close();
 				return true;
 		    } 
 			catch (IOException ex)
@@ -103,16 +101,8 @@ public class PromotionController{
 				ex.printStackTrace();
 			}
 			return false;
-			
 		}
-		private String getNewPromoId() {
-			int count = promoList.size();
-			if (count >= 0) {
-				return ("P"+String.valueOf(Integer.parseInt(promoList.get(promoList.size()-1).getPromoID()) + 1));
-			} else {
-				return "P1";
-			}
-		}
+
 		public Promo getPromoById(String promoId) {
 			Promo obj = null;
 			for(Promo i:promoList)
@@ -145,8 +135,6 @@ public class PromotionController{
 		}
 		public boolean createPromo()
 		{
-
-		    
 		    // Promotion info.
 			String promoName, promoId;
 			double promoPrice;
@@ -193,8 +181,10 @@ public class PromotionController{
 					}
 				}
 			  }while(!itemId.equals("0"));
+			
+			Promo promo = new Promo(promoId, promoName, promoPrice, newItemList);
+			promoList.add(promo);
 
-			//return savePromo(promoId, promoName, promoPrice, newItemList);
 			return saveData();
 		}
 		public void updatePromo(){
@@ -214,6 +204,8 @@ public class PromotionController{
 			{
 				System.out.println("1.Add Item");
 				System.out.println("2.Remove Item");
+				System.out.println("3.Change price");
+				System.out.println("4.Exit");
 				select = sc.nextInt();
 				if(select == 1){	// Add item.
 					System.out.println("Enter the ID of the item to be inserted: ");
@@ -251,11 +243,17 @@ public class PromotionController{
 						System.out.println(String.format("Item %s not found in current promotion package.", itemId));
 					}
 				}
-			}while(select ==1 || select==2);
+				if(select==3){	// change price.
+					System.out.println("Enter the new price: ");
+					double price = sc.nextDouble();
+					
+					promo.setPrice(price);
+				}
+			}while(select ==1 || select==2||select==3);
 		
 			saveData();
 		}
-		public void deletePromo(){
+		public void deletePromo() {
 			printPromotionList();
 			String promoID;
 			System.out.print("Please enter promoID of item to be deleted: ");

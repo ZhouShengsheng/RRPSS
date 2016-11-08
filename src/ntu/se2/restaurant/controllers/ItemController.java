@@ -85,6 +85,7 @@ public class ItemController {
 				out.println(item.getItemID()+","+item.getName()+","+item.getType()+","
 						+item.getDescription()+","+item.getPrice()+","+item.getDiscountedPrice());
 			}
+			out.close();
 			return true;
 	    } 
 		catch (IOException ex)
@@ -199,7 +200,7 @@ public class ItemController {
 		System.out.println("4. Change Type");
 		System.out.println("5. Change Discounted Price");
 		choice = sc.nextInt();
-		sc.skip("\n");
+		sc.skip(System.lineSeparator());
 		switch (choice) {
 		case 1:
 			System.out.print("Enter new name of item:");

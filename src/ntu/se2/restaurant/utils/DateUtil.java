@@ -4,12 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DateFormat 
+public class DateUtil 
 {
-	SimpleDateFormat FORMAT;
-	Calendar calendar;
+	static SimpleDateFormat FORMAT;
+	static Calendar calendar;
 	
-	public Date setYear(Date date)
+	public static Date setYear(Date date)
 	{
 		calendar = Calendar.getInstance(); //get the time
 		calendar.setTime(date);
@@ -17,7 +17,7 @@ public class DateFormat
 		return date = calendar.getTime();
 	}
 	
-	public Date addAnHour (Date date)
+	public static Date addAnHour (Date date)
 	{
 		calendar = Calendar.getInstance();
 		calendar.setTime(date);
@@ -25,34 +25,46 @@ public class DateFormat
 		return date = calendar.getTime();
 	}
 	
-	public String getTime(Date date)
+	public static Date stringToDateTime(String dateStr) throws ParseException {
+		FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		return FORMAT.parse(dateStr);
+	}
+	
+	public static String getTime(Date date)
 	{
 		FORMAT = new SimpleDateFormat("HH:mm");
 		return FORMAT.format(date);
 	}
 	
-	public Date formatStringTimetoDate(String time) throws ParseException
+	public static Date formatStringTimetoDate(String time) throws ParseException
 	{
 		FORMAT = new SimpleDateFormat("HH:mm");
 		Date date  = FORMAT.parse(time);
 		return date;
 	}
 	
-	public String getDate(Date date)
+	public static String getDate(Date date)
 	{
 		FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 		String s = FORMAT.format(date);
 		return s;
 	}
 	
-	public String formatStringDate(String date) throws ParseException
+	public static String getDateTime(Date date)
+	{
+		FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		String s = FORMAT.format(date);
+		return s;
+	}
+	
+	public static String formatStringDate(String date) throws ParseException
 	{
 		FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 		Date date1 = FORMAT.parse(date);
 		return FORMAT.format(date1);
 	}
 
-	public Date formatStringToDate(String date) throws ParseException
+	public static Date formatStringToDate(String date) throws ParseException
 	{
 		FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 		return FORMAT.parse(date);

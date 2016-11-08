@@ -56,7 +56,7 @@ public class Restaurant
 			        System.out.println("4.Back to Main Menu");
 			        ItemController ic = ItemController.sharedInstance();
 			        int subChoice = sc.nextInt();
-			        sc.skip("\n");
+			        sc.skip(System.lineSeparator());
 			        switch(subChoice)
 			        {
 			        case 1: if(ic.createItem())
@@ -80,7 +80,7 @@ public class Restaurant
 	                System.out.println("4.Back to Main Menu");
 	                PromotionController pc = PromotionController.sharedInstance();
 	                int subChoice = sc.nextInt();
-			        sc.skip("\n");
+			        sc.skip(System.lineSeparator());
 			        switch(subChoice)
 	                {
 	                  case 1: if(pc.createPromo())
@@ -105,11 +105,11 @@ public class Restaurant
 	                System.out.println("5.Back to Main Menu");
 	                OrderController oc = OrderController.sharedInstance();
 	                int subChoice = sc.nextInt();
-			        sc.skip("\n");
+			        sc.skip(System.lineSeparator());
 			        switch(subChoice)
 	                {
 	                  case 1: {
-	                	  oc.createOrAddItem();
+	                	  oc.createOrAddItemToOrder();
 	                	  break;
 	                  }
 	                 case 2: {
@@ -159,7 +159,7 @@ public class Restaurant
 	                System.out.println("3.Remove a Reservation");
 	                System.out.println("4.Back to Main Menu");
 	                int subChoice = sc.nextInt();
-			        sc.skip("\n");
+			        sc.skip(System.lineSeparator());
 			        switch(subChoice)
 	                {
 	                 case 1: if(createreservation())
@@ -191,7 +191,7 @@ public class Restaurant
 					System.out.println("2. By month");
 					System.out.println("3. Back to Main Menu");
 					int subChoice = sc.nextInt();
-			        sc.skip("\n");
+			        sc.skip(System.lineSeparator());
 			        switch(subChoice) {
 						case 1: sysm = new SystemManagement();
 					    		sysm.printRevenue(1, sc);

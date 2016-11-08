@@ -12,21 +12,88 @@ import java.util.Scanner;
 
 import ntu.se2.restaurant.controllers.ItemController;
 import ntu.se2.restaurant.controllers.Menu;
-import ntu.se2.restaurant.utils.DateFormat;
+import ntu.se2.restaurant.utils.DateUtil;
 import ntu.se2.restaurant.utils.ScannerUtil;
 public class Order
 {
 	Menu m;
 	private ArrayList<Item> itemList = new ArrayList<Item>();
 	private ArrayList<Promo> pList = new ArrayList<Promo>();
-	private double bill = 0;
-	private double totalBill = 0;
+	private String id;
+	private Date date;
+	private Table table;
+	private double bill = 0;		// bill before tax
+	private double totalBill = 0;	// bill after tax
 	
 	public Order()
 	{
 		
 	}
- 
+	
+	public Menu getM() {
+		return m;
+	}
+
+	public void setM(Menu m) {
+		this.m = m;
+	}
+
+	public ArrayList<Item> getItemList() {
+		return itemList;
+	}
+
+	public void setItemList(ArrayList<Item> itemList) {
+		this.itemList = itemList;
+	}
+
+	public ArrayList<Promo> getpList() {
+		return pList;
+	}
+
+	public void setpList(ArrayList<Promo> pList) {
+		this.pList = pList;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Table getTable() {
+		return table;
+	}
+
+	public void setTable(Table table) {
+		this.table = table;
+	}
+
+	public double getBill() {
+		return bill;
+	}
+
+	public void setBill(double bill) {
+		this.bill = bill;
+	}
+
+	public double getTotalBill() {
+		return totalBill;
+	}
+
+	public void setTotalBill(double totalBill) {
+		this.totalBill = totalBill;
+	}
+
 	public void takeOrder()
 	{
 		m = new Menu();
@@ -41,7 +108,7 @@ public class Order
 			System.out.println("3.Exit ");
 			System.out.println("Enter your choice: ");
 	        choice = sc.nextInt();
-	        sc.skip("\n");
+	        sc.skip(System.lineSeparator());
 			if(choice ==1)
 				m.printMenu();
 			else if(choice ==2)
@@ -129,7 +196,7 @@ public class Order
 	
 	public void printInvoice(Staff staff, ReservationEntity r) throws ParseException
 	{
-		DateFormat DATE_FORMAT=new DateFormat();
+		DateUtil DATE_FORMAT=new DateUtil();
 		r.setEnd();
 		Date d1 = r.getEnd();
 		

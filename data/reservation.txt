@@ -30,3 +30,4 @@ date,name,contact,peoplenumber,starttime,tablenumber,occupied
 00/00/0000,xxx,111,0,00:00,29,0
 00/00/0000,xxx,111,0,00:00,30,0
 11/11/2016,zhou,123,2,12:00,2,1
+12/23/2016,liuz,1234,3,12:30,21,0
