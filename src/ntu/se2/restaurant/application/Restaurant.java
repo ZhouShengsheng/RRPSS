@@ -6,8 +6,10 @@ import java.util.*;
 import ntu.se2.restaurant.controllers.ItemController;
 import ntu.se2.restaurant.controllers.OrderController;
 import ntu.se2.restaurant.controllers.SystemManagement;
+import ntu.se2.restaurant.controllers.TableController;
 import ntu.se2.restaurant.controllers.PromotionController;
-import ntu.se2.restaurant.models.ReservationEntity;
+import ntu.se2.restaurant.controllers.ReservationController;
+import ntu.se2.restaurant.models.Reservation;
 import ntu.se2.restaurant.models.Staff;
 import ntu.se2.restaurant.utils.Availability;
 import ntu.se2.restaurant.utils.ScannerUtil;
@@ -19,8 +21,8 @@ import java.text.SimpleDateFormat;
 public class Restaurant 
 {
 
-	static ReservationEntity r;
-	static ArrayList<ReservationEntity> reserve;
+	static Reservation r;
+	static ArrayList<Reservation> reserve;
 	static SimpleDateFormat FORMAT;
 	static SystemManagement sysm;
 	static Staff staff;
@@ -44,7 +46,6 @@ public class Restaurant
 			System.out.println("6.Print Revenue");
 			//System.out.println("sc.nextLine(): " + sc.nextLine());
 			choice = sc.nextInt();
-			System.out.println("choice: " + choice);
 			
 			switch(choice)
 			{
@@ -120,21 +121,10 @@ public class Restaurant
 	                	 oc.removeItemAtOrder();
 	                	 break;
 	                 }
-	                 case 4: int tableNo3;
-	                         System.out.println("Enter the table number:");
-	                         tableNo3 = sc.nextInt();
-	                         for(ReservationEntity r:seatMan.Occupied)
-	                         {
-	        	               if(Integer.parseInt(r.getTableNo())==tableNo3)
-	        	               {
-	        		              r.tables[tableNo3].order.printInvoice(staff,r);
-	        		              r.tables[tableNo3].reservationRemove();
-	        		              break;
-	        	               }
-	                         }
-	                	     break;
-	                	     
-	                 case 5: break;
+	                 case 4: {
+	                	 oc.printInvoice();
+                	     break;
+	                 }
 	                }
 	                break;
 				}
@@ -144,50 +134,33 @@ public class Restaurant
 	                System.out.println("2.Check Reservation");
 	                System.out.println("3.Remove a Reservation");
 	                System.out.println("4.Back to Main Menu");
+	                ReservationController rc = ReservationController.sharedInstance();
 	                int subChoice = sc.nextInt();
 			        sc.skip(System.lineSeparator());
-			        switch(subChoice)
-	                {
-	                 case 1: if(createreservation())
-	                            System.out.println("Successfully Added!");
-	                         else 
-		                        System.out.println("Process Failed!");
-	                         break;
-	                 case 2: checkreservation(sc);
-	                         break;
-	                 case 3:r = new ReservationEntity();
-	                        r.removeReservation();
-	                        System.out.println("Successfully Deleted!");
-	                        break;
-	               case 4:  break;
+			        switch(subChoice) {
+	                 case 1: {
+	                	 rc.createReservation();
+	                	 break;
+	                 }
+	                 case 2: {
+	                	 rc.checkReservation();
+                         break;
+	                 }
+	                 case 3: {
+	                	 rc.deleteReservation();
+	                	 break;
+	                 }
 	               }
 	               break;
 				}
 	            // Check Table       
 				case 5: {
-					System.out.println("The number of the customers:");
-			        String people=sc.next();
-			        seatMan.checkTable(people);
+					TableController.sharedInstance().checkTableAvailability();
 			        break;
 				}
 				// Print Revenue
 				case 6: {
-					System.out.println("Revenue sorted by?");
-					System.out.println("1. By date");
-					System.out.println("2. By month");
-					System.out.println("3. Back to Main Menu");
-					int subChoice = sc.nextInt();
-			        sc.skip(System.lineSeparator());
-			        switch(subChoice) {
-						case 1: sysm = new SystemManagement();
-					    		sysm.printRevenue(1, sc);
-					    		break;
-						case 2: sysm = new SystemManagement();
-					    		sysm.printRevenue(2, sc);
-					    		break;
-						case 3: break;
-					}
-				
+					OrderController.sharedInstance().printRevenue();
 				    break;
 				}
 				default: {
@@ -196,23 +169,24 @@ public class Restaurant
 				}
 			
 			}
-		}while(choice>=1&& choice <=6);
+		}while(choice>=1 && choice <=6);
 		sc.close();
 	}
 
+	// TODO: To be removed.
 	private static void checkreservation(Scanner sc) throws ParseException,IOException
 	{
 		String name;
 		//Scanner sc = new Scanner(System.in);
 		System.out.println("Enter the customer name of the reservation");
 		name = sc.next();
-		r = new ReservationEntity();
+		r = new Reservation();
 		reserve = r.getAllReservation();
 		FORMAT = new SimpleDateFormat("HH:mm");
 		System.out.println("-------------Reservation--------------");
 		System.out.println("Date              Time            Table No.            Customer Name               Contact Number                No. of people      ");
 		for (int i = 0; i < reserve.size(); i++) {
-			ReservationEntity temp = reserve.get(i);
+			Reservation temp = reserve.get(i);
 			if(temp.getName().equals(name))
 			{
 				temp.setEnd();
@@ -223,10 +197,11 @@ public class Restaurant
 		//sc.close();
 	}
 
+	// TODO: To be removed.
 	private static boolean createreservation() throws ParseException, IOException
 	{
 		Scanner sc = new Scanner(System.in);
-		r = new ReservationEntity();
+		r = new Reservation();
 		System.out.println("Please enter the date:");
 		r.setDate(sc.next());
 		System.out.println("Please enter the start time:");
@@ -241,7 +216,5 @@ public class Restaurant
 		return (r.canReserve());
 	}
 
-
-	
 }
 				

@@ -26,7 +26,9 @@ public class Order
 	private Staff staff;
 	private String status;
 	private double bill = 0;		// bill before tax
-	private double totalBill = 0;	// bill after tax
+	private double billWithTax = 0;	// bill after tax
+	
+	private static final double TAX_RATE = 1.07;
 	
 	public Order()
 	{
@@ -89,12 +91,12 @@ public class Order
 		this.bill = bill;
 	}
 
-	public double getTotalBill() {
-		return totalBill;
+	public double getBillWithTax() {
+		return billWithTax;
 	}
 
-	public void setTotalBill(double totalBill) {
-		this.totalBill = totalBill;
+	public void setBillWithTax(double totalBill) {
+		this.billWithTax = totalBill;
 	}
 	
 	public Staff getStaff() {
@@ -111,6 +113,23 @@ public class Order
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	/**
+	 * Some total bill.
+	 */
+	public void sumBill() {
+		bill = 0;
+		for (int i = 0; i < itemList.size(); i++) {
+			Item item = itemList.get(i);
+			bill += Double.parseDouble(item.getPrice());
+		}
+		for (int i = 0; i < pList.size(); i++) 
+		{
+			Promo prm = pList.get(i);
+			bill += prm.getPrice();
+		}
+		billWithTax = bill * TAX_RATE;
 	}
 
 	// TODO: To be removed.
@@ -149,23 +168,23 @@ public class Order
 	}
 	
 	// TODO: To be removed.
-//	public void takeOrder(Promo p)
-//	{
-//		pList.add(p);
-//	}
-//	
+	public void takeOrder(Promo p)
+	{
+		pList.add(p);
+	}
+	
 	// TODO: To be removed.
-//	public void viewOrder()
-//	{
-//		for (int i = 0; i < itemList.size(); i++) {
-//			Item item = itemList.get(i);
-//			 System.out.println("Item: "+ item.getName()+" $"+item.getPrice());	 
-//		}
-//		for (int i = 0; i < pList.size(); i++) {
-//			Promo prm = pList.get(i);
-//			System.out.println("Promotion: "+ prm.getName()+" $"+prm.getPrice());
-//		}
-//	}
+	public void viewOrder()
+	{
+		for (int i = 0; i < itemList.size(); i++) {
+			Item item = itemList.get(i);
+			 System.out.println("Item: "+ item.getName()+" $"+item.getPrice());	 
+		}
+		for (int i = 0; i < pList.size(); i++) {
+			Promo prm = pList.get(i);
+			System.out.println("Promotion: "+ prm.getName()+" $"+prm.getPrice());
+		}
+	}
 	
 	public double calcBill()
 	{
@@ -179,7 +198,6 @@ public class Order
 			bill += Double.parseDouble(prm.calculatePrice());
 		}
 		
-		System.out.println("Order Bill: "+bill);
 		return bill;
 	}
 	
@@ -217,7 +235,8 @@ public class Order
 		}
 	}
 	
-	public void printInvoice(Staff staff, ReservationEntity r) throws ParseException
+	// TODO: To be removed.
+	public void printInvoice(Staff staff, Reservation r) throws ParseException
 	{
 		DateUtil DATE_FORMAT=new DateUtil();
 		r.setEnd();
@@ -226,7 +245,7 @@ public class Order
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		System.out.println("================THE NTU RESTAURANT================= ");
-		System.out.println("Staff Name :" +staff.getName());
+		System.out.println("Staff ID:" +staff.getStaffID());
 		System.out.println("Table ID: "+r.getTableNo());
 		System.out.println("Date(DD/MM/YYYY):" +DATE_FORMAT.getDate(d1));
 		System.out.println("---------------------------------------------------");
@@ -238,12 +257,12 @@ public class Order
 				System.out.println(" "+(itemList.get(i)).getName()+ " "+ (itemList.get(i)).getPrice());
 		}
 		calcBill();
-		totalBill = bill*1.07;
+		billWithTax = bill*1.07;
 		System.out.println("---------------------------------------------------------");
 		System.out.println("SubTotal : " + df.format(( bill )));
 		System.out.println("Taxes : " + df.format(( bill * 0.07)));
 		System.out.println("--------------------------------------------------------- ");
-		System.out.println("TOTAL : " + df.format((totalBill)));
+		System.out.println("TOTAL : " + df.format((billWithTax)));
 		System.out.println("============= Thank you! Please come again! =============");
 		
 		// save to order.txt

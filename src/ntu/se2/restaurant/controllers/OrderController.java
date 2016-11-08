@@ -8,18 +8,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import ntu.se2.restaurant.models.Item;
 import ntu.se2.restaurant.models.Order;
 import ntu.se2.restaurant.models.Promo;
-import ntu.se2.restaurant.models.ReservationEntity;
+import ntu.se2.restaurant.models.Reservation;
 import ntu.se2.restaurant.models.Staff;
 import ntu.se2.restaurant.models.Table;
-import ntu.se2.restaurant.utils.Availability;
 import ntu.se2.restaurant.utils.DataFilePath;
 import ntu.se2.restaurant.utils.DateUtil;
 import ntu.se2.restaurant.utils.ScannerUtil;
@@ -32,19 +33,19 @@ public class OrderController {
 	// Fields.
 	private ArrayList<Order> orderList;
 	private Scanner sc = ScannerUtil.scanner;
-	private Scanner scanner;
 	private TableController tableController;
 	private PromotionController promotionController;
 	private ItemController itemController;
 	private StaffController staffController;
+	private ReservationController reservationController;
 	
 	private OrderController() {
 		orderList = new ArrayList<Order>();
-		scanner = ScannerUtil.scanner;
 		tableController = TableController.sharedInstance();
 		promotionController = PromotionController.sharedInstance();
 		itemController = ItemController.sharedInstance();
 		staffController = StaffController.sharedInstance();
+		reservationController = ReservationController.sharedInstance();
 		loadData();
 	}
 	
@@ -64,7 +65,6 @@ public class OrderController {
 	 * Load data from file.
 	 * 
 	 */
-	@SuppressWarnings("deprecation")
 	private void loadData() {
 		try {
 			Scanner sc=new Scanner(new BufferedReader(new FileReader(DataFilePath.ORDER_PATH)));
@@ -87,7 +87,9 @@ public class OrderController {
 				String staffId = current[3];
 				order.setStaff(staffController.getStaffById(staffId));
 				order.setStatus(current[4]);
-				for(int i=5;i<current.length;i++)
+				order.setBill(Double.parseDouble(current[5]));
+				order.setBillWithTax(Double.parseDouble(current[6]));
+				for(int i=7;i<current.length;i++)
 				{
 					String id = current[i];
 					if (id.startsWith("P")) {
@@ -123,11 +125,11 @@ public class OrderController {
 	private boolean saveData() {
 		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.ORDER_PATH, false)))) 
 		{
-			out.print("orderId, date, tableNo, staffId, status, item1, item2, item3....");
+			out.print("orderId, date, tableNo, staffId, status, bill, billWithTax, item1, item2, item3....");
 			for (int i = 0; i < orderList.size(); i++) {
 				Order order = orderList.get(i);
 				out.print("\n"+order.getId()+","+DateUtil.getDateTime(order.getDate())+","+order.getTable().getTableNo() +
-						","+order.getStaff().getStaffID()+","+order.getStatus());
+						","+order.getStaff().getStaffID()+","+order.getStatus()+","+order.getBill()+","+order.getBillWithTax());
 				ArrayList<Item> itemList = order.getItemList();
 				ArrayList<Promo> pList = order.getpList();
 				for(int j=0; j<itemList.size(); j++)
@@ -208,15 +210,26 @@ public class OrderController {
 		orderId = sc.nextLine();
 
 		Order order = getOrderById(orderId);
-		int tableNo;
 		if (order == null) { // New order.
 			order = new Order();
 			order.setId(orderId);
 			order.setDate(new Date());
 			System.out.println("This is a new order.");
-			System.out.print("Enter tableNo: ");
-			tableNo = scanner.nextInt();
-			scanner.skip(System.lineSeparator());
+			// Enter phone number to find reservation info.
+			System.out.print("Enter reservation contact: ");
+			String contact = sc.nextLine();
+			Reservation reservation = reservationController.getByContact(contact);
+			int tableNo;
+			if (reservation != null) {
+				reservation.setOrderId(orderId);
+				tableNo = reservation.getTableNo();
+				reservationController.saveData();
+			} else {
+				System.out.print("Reservation not found.");
+				System.out.print("Enter tableNo: ");
+				tableNo = sc.nextInt();
+				sc.skip(System.lineSeparator());
+			}
 			Table table = tableController.getTableByNumber(tableNo);
 			table.setStatus("occupied");
 			order.setTable(table);
@@ -251,6 +264,8 @@ public class OrderController {
 				} else {
 					itemList.add(itemController.getItemById(id));
 				}
+				
+				order.sumBill();
 			}
 		} while (choice == 1 || choice == 2);
 		
@@ -275,12 +290,6 @@ public class OrderController {
 		String orderId;
         System.out.println("Enter the order Id:");
         orderId = sc.nextLine();
-        
-//        System.out.println("orderList.size(): " + orderList.size());
-//        for (int i = 0; i < orderList.size(); i++) {
-//			Order order = orderList.get(i);
-//			System.out.println("order.id: " + order.getId());
-//		}
         
         Order order = getOrderById(orderId);
         printOrder(order);
@@ -331,6 +340,8 @@ public class OrderController {
 						}
 					}
 				}
+				
+				order.sumBill();
 			}
 		} while (choice == 1);
 		
@@ -341,111 +352,115 @@ public class OrderController {
 		 }
 	}
 	
-//	public void takeOrder(Promo p)
-//	{
-//		pList.add(p);
-//	}
+	/**
+	 * Print invoice and end the order.
+	 * 
+	 */
+	public void printInvoice() {
+		String orderId;
+        System.out.print("Enter the order ID:");
+        orderId = sc.nextLine();
+        
+        Order order = getOrderById(orderId);
+        if (order == null) {
+			System.out.println("Order not found.");
+			return ;
+		}
+        Staff staff = staffController.getStaffById(order.getId());
+        Table table = order.getTable();
+        
+        order.setStatus("paid");
+        table.setStatus("vacated");
+        reservationController.removeByOrderId(orderId);
+        
+        // Save data.
+        
+        saveData();
+        tableController.saveData();
+        reservationController.saveData();
+        
+        
+        // Print invoice.
+        
+        ArrayList<Item> itemList = order.getItemList();
+		ArrayList<Promo> pList = order.getpList();
+		
+		System.out.println("================THE NTU RESTAURANT================= ");
+		System.out.println("Staff ID:" + staff.getStaffID());
+		System.out.println("Table NO: " + table.getTableNo());
+		System.out.println("Datetime:" + DateUtil.getDateTime(order.getDate()));
+		System.out.println("---------------------------------------------------");
+		
+		if(itemList.size()>0)
+		{
+			System.out.println("A La Carte Orders:");
+			for(int i = 0; i<itemList.size();i++) {
+				Item item = itemList.get(i);
+				System.out.println(" "+item.getName()+ " "+ item.getPrice());
+			}
+		}
+		if(pList.size()>0)
+		{
+			System.out.println("Promotion Orders:");
+			for(int i = 0; i<pList.size();i++) {
+				Promo promo = pList.get(i);
+				System.out.println(" "+promo.getName()+ " "+ promo.getPrice());
+			}
+		}
+
+		DecimalFormat df = new DecimalFormat("#.##");
+		System.out.println("---------------------------------------------------------");
+		System.out.println("SubTotal : " + df.format(( order.getBill() )));
+		System.out.println("Taxes : " + df.format(((order.getBillWithTax() - order.getBill()))));
+		System.out.println("--------------------------------------------------------- ");
+		System.out.println("TOTAL : " + df.format((order.getBillWithTax())));
+		System.out.println("============= Thank you! Please come again! =============");
+	}
 	
-//	public void viewOrder()
-//	{
-//		for (int i = 0; i < itemList.size(); i++) {
-//			Item item = itemList.get(i);
-//			 System.out.println("Item: "+ item.getName()+" $"+item.getPrice());	 
-//		}
-//		for (int i = 0; i < pList.size(); i++) {
-//			Promo prm = pList.get(i);
-//			System.out.println("Promotion: "+ prm.getName()+" $"+prm.getPrice());
-//		}
-//	}
-	
-//	public double calcBill()
-//	{
-//		for (int i = 0; i < itemList.size(); i++) {
-//			Item item = itemList.get(i);
-//			bill += Double.parseDouble(item.getPrice());
-//		}
-//		for (int i = 0; i < pList.size(); i++) 
-//		{
-//			Promo prm = pList.get(i);
-//			bill += Double.parseDouble(prm.calculatePrice());
-//		}
-//		
-//		System.out.println("Order Bill: "+bill);
-//		return bill;
-//	}
-//	
-//	public void removeOrder()
-//	{
-//		Scanner sc = ScannerUtil.scanner;
-//		String input;
-//		int choice;
-//		System.out.println("1. Remove an item");
-//		System.out.println("2. Remove a promotion");
-//		System.out.println("3.Exit");
-//		choice = sc.nextInt();
-//		
-//		if(choice==1)
-//		{
-//			System.out.println("Enter the ID of the item you want to remove");
-//			input = sc.nextLine();
-//			for (int i = 0; i < itemList.size(); i++) {
-//				Item itm = itemList.get(i);
-//				if(itm.getItemID().equals(input))
-//					itemList.remove(i);
-//			}
-//		}
-//		else if(choice == 2)
-//		{
-//			System.out.println("Enter the ID of the promotion you want to remove");
-//			input = sc.nextLine();
-//			for (int i = 0; i <pList.size(); i++) {
-//				Promo prm = pList.get(i);
-//				if(prm.getPromoID().equals(input))
-//					pList.remove(i);
-//			}
-//			
-//		}
-//	}
-//	
-//	public void printInvoice(Staff staff, ReservationEntity r) throws ParseException
-//	{
-//		DateFormat DATE_FORMAT=new DateFormat();
-//		r.setEnd();
-//		Date d1 = r.getEnd();
-//		
-//		DecimalFormat df = new DecimalFormat("#.##");
-//		
-//		System.out.println("================THE NTU RESTAURANT================= ");
-//		System.out.println("Staff Name :" +staff.getName());
-//		System.out.println("Table ID: "+r.getTableNo());
-//		System.out.println("Date(DD/MM/YYYY):" +DATE_FORMAT.getDate(d1));
-//		System.out.println("---------------------------------------------------");
-//		
-//		if(itemList.size()>0)
-//		{
-//			System.out.println("A La Carte Orders:");
-//			for(int i = 0; i<itemList.size();i++)
-//				System.out.println(" "+(itemList.get(i)).getName()+ " "+ (itemList.get(i)).getPrice());
-//		}
-//		calcBill();
-//		totalBill = bill*1.07;
-//		System.out.println("---------------------------------------------------------");
-//		System.out.println("SubTotal : " + df.format(( bill )));
-//		System.out.println("Taxes : " + df.format(( bill * 0.07)));
-//		System.out.println("--------------------------------------------------------- ");
-//		System.out.println("TOTAL : " + df.format((totalBill)));
-//		System.out.println("============= Thank you! Please come again! =============");
-//		
-//		// save to order.txt
-//		
-//		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("order.txt",true))))
-//    	{
-//    		out.print("\n"+DATE_FORMAT.getDate(d1)+","+bill);
-//    	}
-//    	catch(IOException ex)
-//    	{
-//    		ex.printStackTrace();
-//    	}
-//	}
+	public void printRevenue() {
+		System.out.println("Revenue sorted by?");
+		System.out.println("1. By date");
+		System.out.println("2. By month");
+		System.out.println("3. Back to Main Menu");
+		int subChoice = sc.nextInt();
+        sc.skip(System.lineSeparator());
+        double totalRevenue = 0;
+		double totalRevenueWithTax = 0;
+		List<Order> datedOrderList = null;
+		
+        switch(subChoice) {
+			case 1: {
+				System.out.print("Enter date: ");
+				String date = sc.nextLine();
+				datedOrderList = orderList.stream()
+						.filter(order -> date.equals(DateUtil.getDate(order.getDate())) && order.getStatus().equals("paid"))
+						.collect(Collectors.toList());
+				break;
+			}
+			case 2: {
+				System.out.print("Enter month: ");
+				int month = sc.nextInt();
+				sc.skip(System.lineSeparator());
+				
+				datedOrderList = orderList.stream().filter(order -> {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(order.getDate());
+					return month == calendar.get(Calendar.MONTH) + 1 && order.getStatus().equals("paid");
+				}).collect(Collectors.toList());
+				
+				break;
+			}
+		}
+        if (datedOrderList != null) {
+        	for (int i = 0; i < datedOrderList.size(); i++) {
+    			Order order = datedOrderList.get(i);
+    			printOrder(order);
+    			totalRevenue += order.getBill();
+    			totalRevenueWithTax += order.getBillWithTax();
+    		}
+        	System.out.println(String.format("Total Revenue: $ %.2f", totalRevenue));
+        	System.out.println(String.format("Total Revenue (Tax Included): $ %.2f", totalRevenueWithTax));
+		}
+	}
 	
 }

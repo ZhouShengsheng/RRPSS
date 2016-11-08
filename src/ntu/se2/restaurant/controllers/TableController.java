@@ -7,11 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
+import ntu.se2.restaurant.models.Reservation;
 import ntu.se2.restaurant.models.Table;
 import ntu.se2.restaurant.utils.DataFilePath;
+import ntu.se2.restaurant.utils.DateUtil;
 import ntu.se2.restaurant.utils.ScannerUtil;
 
 public class TableController {
@@ -125,6 +129,58 @@ public class TableController {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Check table availability cur walk-in customers at current time.
+	 */
+	public void checkTableAvailability() {
+		System.out.println("Enter people number: ");
+		int peopleNum = sc.nextInt();
+		sc.skip(System.lineSeparator());
+		for (int i = 0; i < tableList.size(); i++) {
+			Table table = tableList.get(i);
+			if (table.getSize() >= peopleNum && 
+				!table.getStatus().equals("occupied")) {
+				
+				ArrayList<Reservation> reservationList = ReservationController.sharedInstance().getReservationList();
+				Date now = new Date();
+				
+				Runnable successRunnable = new Runnable() {
+					@Override
+					public void run() {
+						System.out.println(String.format("Table %d is suitable for you.", table.getTableNo()));
+					}
+				};
+				
+				boolean foundInReservationList = false;
+				for (int j = 0; j < reservationList.size(); j++) {
+					Reservation reservation = reservationList.get(j);
+					if (reservation.getTableNo() == table.getTableNo()) {
+						foundInReservationList = true;
+						Date today = DateUtil.formatStringToDate(DateUtil.getDate(now));
+						Date nowTime = DateUtil.formatStringTimetoDate(DateUtil.getTime(now));
+						Date todayStart = DateUtil.formatStringTimetoDate(DateUtil.getTime(reservation.getStart()));
+						Date todayEnd = DateUtil.formatStringTimetoDate(DateUtil.getTime(reservation.getEnd()));
+						if (table.getTableNo() == reservation.getTableNo()) {
+							if (today.equals(reservation.getDate()) && 
+									(nowTime.before(todayEnd) &&
+											nowTime.after(todayStart))) {
+								continue;
+							}
+						}
+						
+						successRunnable.run();
+						return ;
+					}
+				}
+				
+				if (!foundInReservationList) {
+					successRunnable.run();
+					return ;
+				}
+			}
+		}
 	}
 
 }

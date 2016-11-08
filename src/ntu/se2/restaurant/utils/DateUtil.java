@@ -36,10 +36,17 @@ public class DateUtil
 		return FORMAT.format(date);
 	}
 	
-	public static Date formatStringTimetoDate(String time) throws ParseException
+	public static Date formatStringTimetoDate(String time)
 	{
 		FORMAT = new SimpleDateFormat("HH:mm");
-		Date date  = FORMAT.parse(time);
+		Date date;
+		try {
+			date = FORMAT.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			date = new Date();
+		}
 		return date;
 	}
 	
@@ -64,9 +71,15 @@ public class DateUtil
 		return FORMAT.format(date1);
 	}
 
-	public static Date formatStringToDate(String date) throws ParseException
+	public static Date formatStringToDate(String date)
 	{
 		FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-		return FORMAT.parse(date);
+		try {
+			return FORMAT.parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

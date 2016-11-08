@@ -6,34 +6,34 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import ntu.se2.restaurant.models.ReservationEntity;
+import ntu.se2.restaurant.models.Reservation;
 import ntu.se2.restaurant.models.Table;
 
 public class Availability 
 {
-	ReservationEntity reservation=new ReservationEntity();
+	Reservation reservation=new Reservation();
 	// All reservations.
-	public ArrayList<ReservationEntity> reservationList = new ArrayList<ReservationEntity>();
-	public ArrayList<ReservationEntity> Occupied = new ArrayList<ReservationEntity>();
+	public ArrayList<Reservation> reservationList = new ArrayList<Reservation>();
+	public ArrayList<Reservation> Occupied = new ArrayList<Reservation>();
 	private static final DateUtil DATE_FORMAT=new DateUtil();
 	public Availability() {
 		
 	}
 
-	public ArrayList<ReservationEntity> getOccupied(){
+	public ArrayList<Reservation> getOccupied(){
 		return Occupied;
 	}
-	public void setOccupied(ArrayList<ReservationEntity> Occupied){
+	public void setOccupied(ArrayList<Reservation> Occupied){
 		this.Occupied=Occupied;
 	}
 	
 	public void getOccupiedtable() throws ParseException,IOException{
-		reservation=new ReservationEntity();
+		reservation=new Reservation();
 		Occupied=reservation.getCurrentReservation();
 		
 	}
 	public void checkTable(String People)throws IOException, ParseException{
-		reservation=new ReservationEntity();
+		reservation=new Reservation();
 		Date date,Start;
 		String date_use;
 		Calendar calendar=Calendar.getInstance();

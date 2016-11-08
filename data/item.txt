@@ -1,8 +1,8 @@
 itemID, name, type, desc, price, discounted price
-1,steak,m,9,delicious Steak,8  
-2,Pasta,m,6,delicious Pasta,5  
-3,Pepsi,d,2,Sugarated Drink,1  
-4,Fanta,d,2,Sugarated Drink,1  
-5,banana split,d,5, ice cream, 4  
-7,cheese cakes,b,2,Nice,1.5
+1,steak,m,delicious Steak,9,8
+2,Pasta,m,delicious Pasta,6,5
+3,Pepsi,d,Sugarated Drink,2,1
+4,Fanta,d,Sugarated Drink,2,1
+5,banana split,d,ice cream,5,4
+7,cheese cakes,b,Nice,2,1.5
 8,coke,b,drink,5,3.5

@@ -74,7 +74,6 @@ public class ItemController {
 	/**
 	 * Save data to file.
 	 * 
-	 * String itemID, String name, char type, String description,String price,String discountedPrice
 	 */
 	private boolean saveData() {
 		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataFilePath.ITEM_PATH, false)))) 

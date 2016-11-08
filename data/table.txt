@@ -1,5 +1,5 @@
 itemID, name, type, desc, price, discounted price
-1,2,occupied
+1,2,vacated
 2,2,occupied
 3,2,vacated
 4,2,vacated
@@ -9,7 +9,7 @@ itemID, name, type, desc, price, discounted price
 8,2,vacated
 9,2,vacated
 10,2,vacated
-11,2,vacated
+11,4,vacated
 12,4,vacated
 13,4,vacated
 14,4,vacated
@@ -19,12 +19,12 @@ itemID, name, type, desc, price, discounted price
 18,4,vacated
 19,4,vacated
 20,4,vacated
-21,4,vacated
+21,8,vacated
 22,8,vacated
 23,8,vacated
 24,8,vacated
 25,8,vacated
-26,8,vacated
+26,10,vacated
 27,10,vacated
 28,10,vacated
 29,10,vacated
